@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+	<!-- 1.开启包扫描 -->
+	<context:component-scan base-package="com.example.controller" />
+
+
+	<!-- 视图解析器 -->
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<!-- 将视图名 渲染后视图的前缀 -->
+		<property name="prefix" value="/" />
+		<!-- 渲染后视图的后缀 -->
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+
+	<!-- 
+		全局异常处理
+		出现异常后先看当前异常是否配置
+			1)如果有配置跳转到指定页面
+			2)如果没有配置看当前异常的父类是否配置
+				a)配置了就跳转到指定页面
+				b)如果父类异常也没有配置，就跳转到默认的页面
+	 -->
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		
+		<!-- 错误异常后默认跳转的页面视图 -->
+		<property name="defaultErrorView" value="error"/>
+		
+		<!-- 跳转到错误页面后通过ex属性可以访问错误信息 -->
+		<property name="exceptionAttribute" value="ex">
+		</property>
+		
+		<!-- 不同的异常可以跳转到不同的页面-->
+<!-- 		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.RuntimeException">
+					error-my
+				</prop>
+			</props>
+		</property> -->
+	</bean>
+
+
+</beans>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace：接口的全类名  -->
+<mapper namespace="com.example.dao.IUserDao">
+
+    <!-- 这里使用类名别名 -->
+	<resultMap type="user" id="userMap">
+		<id column="id" property="id"/>
+		<result column="sno" property="sno"/>
+		<result column="sname" property="sname"/>
+	</resultMap>
+
+	<select id="getUserList" resultMap="userMap">
+		select * from student
+	</select>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	 xmlns:tx="http://www.springframework.org/schema/tx"
+	  xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+		 http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="com.example"/>
+
+	<!-- 1.数据源 -->
+	<context:property-placeholder file-encoding="utf-8" location="classpath:db.properties" />
+	 <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="user" value="${user}"/>
+		<property name="password" value="${password}"/>
+		<property name="driverClass" value="${driver}"/>
+		<property name="jdbcUrl" value="${url}"/>
+	</bean>
+	
+	<!-- 2.Spring整合MyBatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- mybatis配置文件 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+	</bean>
+	
+	<!-- 3.事务管理器 -->
+	<bean id="tx" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 4.事务策略 -->
+	<tx:advice transaction-manager="tx" id="txAdvices">
+		<tx:attributes>
+			<tx:method name="get*" isolation="DEFAULT" propagation="REQUIRED" read-only="true"/>
+			<tx:method name="add*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+			<tx:method name="update*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+			<tx:method name="delete*" isolation="DEFAULT" propagation="REQUIRED" read-only="false"/>
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 5.切点 -->
+	<aop:config>
+		<aop:advisor advice-ref="txAdvices" pointcut="execution(* com.example.service.*.*(..))"/>
+	</aop:config>
+	
+	<!-- 6.自定创建dao层的代理类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 设置dao层接口名称 -->
+		<property name="basePackage" value="com.example.dao"></property>
+		<!-- 设置sqlSessino工厂的名称 -->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+</beans>

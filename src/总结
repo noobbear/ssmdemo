@@ -1,0 +1,9 @@
+
+1.SSM整合
+	1)先搭建SpringMVC环境
+		a)导入jar包
+		b)配置文件
+	2)搭建MyBatis环境
+		a)导入jar包
+		b)配置文件
+	3)Spring和MyBaits整合
